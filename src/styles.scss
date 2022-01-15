@@ -1,1 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+html,
+body,
+app-root,
+mat-tab-body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+}
+
+:root {
+  --main-blue-color: #3d3db9;
+}
+
+
+.custom-input {
+  padding: 10px;
+  border-radius: 9px;
+  border: 1px solid #c1bcbc;
+}
+
+
+.custom-button {
+  margin-right: 10px;
+  padding: 10px 10px 10px 10px;
+  background: var(--main-blue-color);
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}

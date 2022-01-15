@@ -1,0 +1,76 @@
+.form {
+  width: 800px;
+  height: 400px;
+  background: #e9e9e9;
+  padding: 15px 0 15px 15px;
+  border: 2px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+}
+
+.box {
+  color: var(--main-blue-color);
+  margin-right: 10px;
+}
+
+.title-text {
+  color: var(--main-blue-color);
+  font-size: 24px;
+}
+
+.body {
+  padding: 20px;
+}
+
+.form-body {
+  padding: 12px 35px 12px 12px;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.row {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.hl {
+  margin-top: 5px;
+  width: 94%;
+  height: 4px;
+  background: var(--main-blue-color);
+}
+
+.custom-button {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.button-icon {
+  margin-right: 20px;
+}
+
+.cancel-button {
+  background: #d05115;
+}

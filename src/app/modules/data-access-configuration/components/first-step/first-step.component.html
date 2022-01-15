@@ -1,0 +1,48 @@
+<div class="form">
+  <div class="header">
+    <div class="title">
+      <fa-icon class="box fa-2x" [icon]="boxIcon"></fa-icon>
+      <span class="title-text">Мастер настройки службы доступа к данным</span>
+    </div>
+    <fa-icon class="box fa-2x" [icon]="closeIcon"></fa-icon>
+  </div>
+  <div class="hl"></div>
+  <div class="body">
+    <span class="text">Укажите параметры подключения к БД</span>
+
+    <div class="form-body">
+      <div class="row">
+        <span class="text">SQL-сервер:</span>
+        <input class="custom-input " type="text"/>
+      </div>
+      <div class="row">
+        <span class="text">Логин</span>
+        <input class="custom-input " type="text"/>
+      </div>
+      <div class="row">
+        <span class="text">Пароль</span>
+        <input class="custom-input " type="password"/>
+      </div>
+
+      <div class="row">
+        <span class="text">База данных</span>
+        <input class="custom-input " type="text"/>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <button class="custom-button">
+      <fa-icon class="button-icon fa-lg"  [icon]="checkButtonIcon"></fa-icon>
+      <span class="text" >Далее</span>
+    </button>
+    <button class="custom-button cancel-button">
+      <fa-icon class="button-icon fa-lg"  [icon]="closeButtonIcon"></fa-icon>
+      <span class="text">Отмена</span>
+    </button>
+  </div>
+
+</div>
+
+
