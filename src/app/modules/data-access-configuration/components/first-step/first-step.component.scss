@@ -71,6 +71,16 @@
   margin-right: 20px;
 }
 
+.new-bd-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.new-bd {
+  color: #d05115;
+}
+
 .cancel-button {
   background: #d05115;
 }

@@ -1,0 +1,39 @@
+:host {
+  width: calc(100% - 34px);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.autocomplete {
+  width: 98.5%;
+  border: 1px solid #b2b5bb;
+  border-radius: 9px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.autocomplete::placeholder {
+  color: var(--secondary-40-color);
+}
+
+.close,
+.arrow {
+  position: absolute;
+}
+
+.arrow {
+  top: 9px;
+  right: -20px;
+}
+
+.close {
+  width: 20px;
+  height: 20px;
+  right: 10px;
+  color: white;
+  background-color: var(--secondary-40-color);
+  border-radius: 50%;
+  top: 11px;
+}

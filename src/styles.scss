@@ -1,3 +1,6 @@
+@import '~@angular/material/theming';
+
+
 html,
 body,
 app-root,
@@ -10,8 +13,36 @@ body {
   font-family: Roboto, sans-serif;
 }
 
+
+@include mat-core();
+$opod: (
+  50: #CFDFF6,
+  100: #CFDFF6,
+  200: #CFDFF6,
+  300: #CFDFF6,
+  400: #A0BFEE,
+  500: #698CCE,
+  600: #698CCE,
+  700: #3C5B9C,
+  800: #10255A,
+  900: #10255A,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+
 :root {
-  --main-blue-color: #3d3db9;
+  --main-blue-color: #3C5B9C;
 }
 
 
@@ -31,3 +62,6 @@ body {
   border: none;
   cursor: pointer;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

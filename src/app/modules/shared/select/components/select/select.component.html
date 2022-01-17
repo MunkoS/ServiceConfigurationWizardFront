@@ -1,0 +1,24 @@
+<div class="input-wrapper">
+  <input
+    #inputAutoComplete
+    type="text"
+    [attr.aria-label]="placeholder"
+    [matAutocomplete]="autoComplete"
+    [formControl]="searchPhrase"
+    class="autocomplete custom-input"
+    [placeholder]="placeholder"
+  />
+  <fa-icon *ngIf="isOpen" class="inactive-color arrow" [icon]="iconUp"></fa-icon>
+  <fa-icon *ngIf="!isOpen" class="inactive-color arrow" [icon]="iconDown"></fa-icon>
+</div>
+
+
+<mat-autocomplete #autoComplete="matAutocomplete" (opened)="this.isOpen = true" (closed)="this.isClosed.emit(true);isOpen = false">
+ <mat-option *ngIf="loading">
+    <app-loader></app-loader>
+  </mat-option>
+
+    <mat-option *ngFor="let option of $any(filteredOptions) | async" [value]="option.value" (click)="chooseOption(option.value)">{{ option.title }} </mat-option>
+
+</mat-autocomplete>
+

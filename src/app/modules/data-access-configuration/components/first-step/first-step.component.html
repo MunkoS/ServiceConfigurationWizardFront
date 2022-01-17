@@ -10,39 +10,54 @@
   <div class="body">
     <span class="text">Укажите параметры подключения к БД</span>
 
-    <div class="form-body">
+    <div class="form-body" [formGroup]="form">
+
+      <div formGroupName="security">
       <div class="row">
         <span class="text">SQL-сервер:</span>
-        <input class="custom-input " type="text"/>
+        <input  formControlName="dataSource" class="custom-input" type="text" placeholder="SQL-сервер" />
       </div>
       <div class="row">
         <span class="text">Логин</span>
-        <input class="custom-input " type="text"/>
+        <input formControlName="login" class="custom-input" type="text" placeholder="Логин" />
       </div>
       <div class="row">
         <span class="text">Пароль</span>
-        <input class="custom-input " type="password"/>
+        <input formControlName="password" class="custom-input" type="password" placeholder="Пароль" />
       </div>
-
+      </div>
       <div class="row">
         <span class="text">База данных</span>
-        <input class="custom-input " type="text"/>
+        <ng-container *ngLet="bdOptions$ | async as bdOptions">
+          <app-select
+            (click)="downloadBdOptions()"
+            (isClosed)="isClosedSelect = $event"
+            formControlName="dbName"
+            [loading]="bdLoading"
+            [selectOptions]="bdOptions"
+            placeholder="База данных"
+          ></app-select>
+        </ng-container>
       </div>
+      <div *ngIf="sqlError" class="text new-bd new-bd-container">Нет связи с SQL сервером</div>
+      <div *ngIf="createNewBd" class="text new-bd new-bd-container">Бд будет создана</div>
     </div>
-
   </div>
 
+
+
+  <div *ngIf="sqlConnectionCheck" class="text new-bd">Выполняется проверка связи с SQL сервером...</div>
   <div class="footer">
-    <button class="custom-button">
-      <fa-icon class="button-icon fa-lg"  [icon]="checkButtonIcon"></fa-icon>
+    <button class="custom-button"  *ngIf="form.valid && !sqlConnectionCheck && !sqlError" (click)="next()">
+      <fa-icon class="button-icon fa-lg" [icon]="checkButtonIcon"></fa-icon>
       <span class="text" >Далее</span>
     </button>
-    <button class="custom-button cancel-button">
-      <fa-icon class="button-icon fa-lg"  [icon]="closeButtonIcon"></fa-icon>
+    <button (click)="test()">
+      weewew
+    </button>
+    <button class="custom-button cancel-button" routerLink="/">
+      <fa-icon class="button-icon fa-lg" [icon]="closeButtonIcon"></fa-icon>
       <span class="text">Отмена</span>
     </button>
   </div>
-
 </div>
-
-

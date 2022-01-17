@@ -33,6 +33,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -72,12 +73,18 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ServiceConfigurationWizard:build:production",
+            "proxyConfig": "src/proxy.config.json"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "ServiceConfigurationWizard:build:production"
+              "browserTarget": "ServiceConfigurationWizard:build:production",
+              "proxyConfig": "src/proxy.config.json"
             },
             "development": {
-              "browserTarget": "ServiceConfigurationWizard:build:development"
+              "browserTarget": "ServiceConfigurationWizard:build:development",
+              "proxyConfig": "src/proxy.config.json"
             }
           },
           "defaultConfiguration": "development"
@@ -101,6 +108,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
