@@ -195,10 +195,15 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   }
 
   public next(): void {
-    console.info(this.form);
-  }
-
-  public test(): void {
-    console.info(this.form);
+    this.dbConfigService
+      .dbConfigPatch$Json({
+        body: {
+          password: this.securityGroup?.password?.value,
+          dataSource: this.securityGroup?.dataSource?.value,
+          userId: this.securityGroup?.login?.value
+        }
+      })
+      .pipe(takeUntil(this._destroy$))
+      .subscribe();
   }
 }
