@@ -1,12 +1,4 @@
-<div class="form">
-  <div class="header">
-    <div class="title">
-      <fa-icon class="box fa-2x" [icon]="boxIcon"></fa-icon>
-      <span class="title-text">Мастер настройки службы доступа к данным</span>
-    </div>
-    <fa-icon class="box fa-2x" [icon]="closeIcon"></fa-icon>
-  </div>
-  <div class="hl"></div>
+
   <div class="body">
     <span class="text">Укажите параметры подключения к БД</span>
 
@@ -30,8 +22,6 @@
         <span class="text">База данных</span>
         <ng-container *ngLet="bdOptions$ | async as bdOptions">
           <app-select
-            (click)="downloadBdOptions()"
-            (isClosed)="isClosedSelect = $event"
             formControlName="dbName"
             [loading]="bdLoading"
             [selectOptions]="bdOptions"
@@ -57,4 +47,4 @@
       <span class="text">Отмена</span>
     </button>
   </div>
-</div>
+

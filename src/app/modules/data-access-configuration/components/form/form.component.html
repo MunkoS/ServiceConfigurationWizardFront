@@ -1,0 +1,12 @@
+<div class="form">
+  <div class="header">
+    <div class="title">
+      <fa-icon class="box fa-2x" [icon]="boxIcon"></fa-icon>
+      <span class="title-text">Мастер настройки службы доступа к данным</span>
+    </div>
+    <fa-icon class="box fa-2x" routerLink="/" [icon]="closeIcon"></fa-icon>
+  </div>
+  <div class="hl"></div>
+  <first-step *ngIf="!secondStep" (secondStep)="goSecondStep($event)"></first-step>
+  <second-step *ngIf="secondStep" [dbConfig]="dbConfig"></second-step>
+</div>

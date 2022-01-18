@@ -13,7 +13,7 @@
 </div>
 
 
-<mat-autocomplete #autoComplete="matAutocomplete" (opened)="this.isOpen = true" (closed)="this.isClosed.emit(true);isOpen = false">
+<mat-autocomplete #autoComplete="matAutocomplete" (opened)="this.isOpen = true" (closed)="isOpen = false">
  <mat-option *ngIf="loading">
     <app-loader></app-loader>
   </mat-option>

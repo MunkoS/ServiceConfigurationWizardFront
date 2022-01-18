@@ -6,10 +6,12 @@ import { MainComponent } from './components/main/main.component';
 import { DataAccessConfigurationModuleRoutingModule } from './data-access-configuration-routing.module';
 import { FirstStepComponent } from './components/first-step/first-step.component';
 import { SelectModule } from '../shared/select/select.module';
-import {NgLetModule} from "../shared/ng-let/ng-let.module";
+import { NgLetModule } from '../shared/ng-let/ng-let.module';
+import { FormComponent } from './components/form/form.component';
+import { SecondStepComponent } from './components/second-step/second-step.component';
 
 @NgModule({
-  declarations: [MainComponent, FirstStepComponent],
+  declarations: [MainComponent, FirstStepComponent, FormComponent, SecondStepComponent],
   imports: [CommonModule, DataAccessConfigurationModuleRoutingModule, FontAwesomeModule, ReactiveFormsModule, SelectModule, NgLetModule]
 })
 export class DataAccessConfigurationModule {}

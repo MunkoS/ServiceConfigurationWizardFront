@@ -1,11 +1,12 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { faBoxOpen, faWindowClose, faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, debounceTime, Observable, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SelectModel } from '../../../shared/select/models/select';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
+import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 
 @Component({
   selector: 'first-step',
@@ -16,12 +17,14 @@ import { SqlService } from '../../../api/ng-openapi/services/sql.service';
 export class FirstStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
   private _bdNames: string[] | undefined;
+
+  @Output() public readonly secondStep = new EventEmitter<DbConfig>();
+
   public formChange = false;
-  public boxIcon = faBoxOpen;
-  public sqlConnectionCheck = true;
+
+  public sqlConnectionCheck = false;
   public createNewBd = false;
-  public isClosedSelect = true;
-  public closeIcon = faWindowClose;
+
   public closeButtonIcon = faTimes;
   public checkButtonIcon = faCheck;
   public bdLoading = false;
@@ -82,8 +85,16 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   }
 
   private checkSqlConnections(): Observable<boolean> {
+    if (!this.securityGroup?.dataSource?.value || !this.securityGroup?.password?.value || !this.securityGroup?.login?.value) {
+      this.sqlError = true;
+      this.sqlConnectionCheck = false;
+      this.enableFields();
+      this.cdr.detectChanges();
+      return of(false);
+    }
     this.sqlConnectionCheck = true;
     this.disableFields();
+
     return this.sqlService
       .getSqlConnectionsPost$Json({
         body: {
@@ -111,6 +122,8 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.disableFields();
+    this.downloadBdOptions();
     this.form
       .get('dbName')
       ?.valueChanges.pipe(takeUntil(this._destroy$))
@@ -128,6 +141,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
         debounceTime(300),
         switchMap(() => {
           this.formChange = true;
+          this.downloadBdOptions();
           return this.checkSqlConnections();
         }),
         takeUntil(this._destroy$)
@@ -148,13 +162,20 @@ export class FirstStepComponent implements OnInit, OnDestroy {
             this.form?.get('dbName')?.setValue(res.dbName);
           }
           return this.checkSqlConnections();
+        }),
+        catchError(() => {
+          this.sqlError = true;
+          this.sqlConnectionCheck = false;
+          this.enableFields();
+          this.cdr.detectChanges();
+          return of(false);
         })
       )
       .subscribe();
   }
 
   public downloadBdOptions(): void {
-    if (!this.isClosedSelect || (!this.formChange && this._bdNames?.length)) {
+    if (this.formChange) {
       return;
     }
     this.formChange = false;
@@ -189,21 +210,17 @@ export class FirstStepComponent implements OnInit, OnDestroy {
       );
   }
 
+  public next(): void {
+    this.secondStep.emit({
+      password: this.securityGroup?.password?.value,
+      hostName: this.securityGroup?.dataSource?.value,
+      dbName: this.securityGroup?.login?.value,
+      userName: this.form.get('dbName')?.value
+    });
+  }
+
   public ngOnDestroy(): void {
     this._destroy$.next(true);
     this._destroy$.unsubscribe();
-  }
-
-  public next(): void {
-    this.dbConfigService
-      .dbConfigPatch$Json({
-        body: {
-          password: this.securityGroup?.password?.value,
-          dataSource: this.securityGroup?.dataSource?.value,
-          userId: this.securityGroup?.login?.value
-        }
-      })
-      .pipe(takeUntil(this._destroy$))
-      .subscribe();
   }
 }

@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { DbConfig } from '../models/db-config';
-import { GetDatabasesParams } from '../models/get-databases-params';
 
 @Injectable({
   providedIn: 'root',
@@ -116,7 +115,7 @@ export class DbConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   dbConfigPatch$Plain$Response(params?: {
-    body?: GetDatabasesParams
+    body?: DbConfig
   }): Observable<StrictHttpResponse<DbConfig>> {
 
     const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
@@ -142,7 +141,7 @@ export class DbConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   dbConfigPatch$Plain(params?: {
-    body?: GetDatabasesParams
+    body?: DbConfig
   }): Observable<DbConfig> {
 
     return this.dbConfigPatch$Plain$Response(params).pipe(
@@ -157,7 +156,7 @@ export class DbConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   dbConfigPatch$Json$Response(params?: {
-    body?: GetDatabasesParams
+    body?: DbConfig
   }): Observable<StrictHttpResponse<DbConfig>> {
 
     const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
@@ -183,7 +182,7 @@ export class DbConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   dbConfigPatch$Json(params?: {
-    body?: GetDatabasesParams
+    body?: DbConfig
   }): Observable<DbConfig> {
 
     return this.dbConfigPatch$Json$Response(params).pipe(

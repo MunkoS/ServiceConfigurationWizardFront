@@ -29,7 +29,6 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
 
   public isOpen = false;
 
-  @Output() public readonly isClosed = new EventEmitter<boolean>();
   @Input() public set selectOptions(value: SelectModel[]) {
     this._options = value;
     this.filteredOptions = (this.searchPhrase.valueChanges as Observable<string>).pipe(
@@ -98,10 +97,18 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
 
   public writeValue(value: string | undefined): void {
     this.value = value;
+    this.searchPhrase.setValue(this.value);
   }
 
   public closePanel(): void {
     this.autoComplete?.closePanel();
     this.inputAutoComplete?.nativeElement.blur();
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    if (this.inputAutoComplete) {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      (this.inputAutoComplete?.nativeElement).disabled = isDisabled;
+    }
   }
 }
