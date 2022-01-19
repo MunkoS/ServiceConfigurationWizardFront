@@ -116,7 +116,7 @@ export class DbConfigService extends BaseService {
    */
   dbConfigPatch$Plain$Response(params?: {
     body?: DbConfig
-  }): Observable<StrictHttpResponse<DbConfig>> {
+  }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
     if (params) {
@@ -129,7 +129,7 @@ export class DbConfigService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<DbConfig>;
+        return (r as HttpResponse<any>).clone({ body: String((r as HttpResponse<any>).body) === 'true' }) as StrictHttpResponse<boolean>;
       })
     );
   }
@@ -142,10 +142,10 @@ export class DbConfigService extends BaseService {
    */
   dbConfigPatch$Plain(params?: {
     body?: DbConfig
-  }): Observable<DbConfig> {
+  }): Observable<boolean> {
 
     return this.dbConfigPatch$Plain$Response(params).pipe(
-      map((r: StrictHttpResponse<DbConfig>) => r.body as DbConfig)
+      map((r: StrictHttpResponse<boolean>) => r.body as boolean)
     );
   }
 
@@ -157,7 +157,7 @@ export class DbConfigService extends BaseService {
    */
   dbConfigPatch$Json$Response(params?: {
     body?: DbConfig
-  }): Observable<StrictHttpResponse<DbConfig>> {
+  }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
     if (params) {
@@ -170,7 +170,7 @@ export class DbConfigService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<DbConfig>;
+        return (r as HttpResponse<any>).clone({ body: String((r as HttpResponse<any>).body) === 'true' }) as StrictHttpResponse<boolean>;
       })
     );
   }
@@ -183,10 +183,10 @@ export class DbConfigService extends BaseService {
    */
   dbConfigPatch$Json(params?: {
     body?: DbConfig
-  }): Observable<DbConfig> {
+  }): Observable<boolean> {
 
     return this.dbConfigPatch$Json$Response(params).pipe(
-      map((r: StrictHttpResponse<DbConfig>) => r.body as DbConfig)
+      map((r: StrictHttpResponse<boolean>) => r.body as boolean)
     );
   }
 

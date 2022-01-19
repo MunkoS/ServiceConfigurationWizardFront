@@ -8,5 +8,5 @@
   </div>
   <div class="hl"></div>
   <first-step *ngIf="!secondStep" (secondStep)="goSecondStep($event)"></first-step>
-  <second-step *ngIf="secondStep" [dbConfig]="dbConfig"></second-step>
+  <second-step *ngIf="secondStep" (firstStep)="secondStep = !secondStep" [dbConfig]="dbConfig"></second-step>
 </div>

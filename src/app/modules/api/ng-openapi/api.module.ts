@@ -4,6 +4,7 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
+import { DasServicesService } from './services/das-services.service';
 import { DbConfigService } from './services/db-config.service';
 import { SqlService } from './services/sql.service';
 
@@ -15,6 +16,7 @@ import { SqlService } from './services/sql.service';
   exports: [],
   declarations: [],
   providers: [
+    DasServicesService,
     DbConfigService,
     SqlService,
     ApiConfiguration

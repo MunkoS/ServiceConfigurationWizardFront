@@ -65,3 +65,34 @@ $opod: (
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.custom-button {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.button-icon {
+  margin-right: 20px;
+}
+
+.new-bd-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.new-bd {
+  color: #d05115;
+}
+
+.cancel-button {
+  background: #d05115;
+}

@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { Databases } from '../models/databases';
+import { DbConfig } from '../models/db-config';
 import { GetDatabasesParams } from '../models/get-databases-params';
 
 @Injectable({
@@ -111,21 +112,21 @@ export class SqlService extends BaseService {
   }
 
   /**
-   * Path part for operation getSqlConnectionsPost
+   * Path part for operation checkSqlConnectionsPost
    */
-  static readonly GetSqlConnectionsPostPath = '/getSqlConnections';
+  static readonly CheckSqlConnectionsPostPath = '/checkSqlConnections';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getSqlConnectionsPost$Plain()` instead.
+   * To access only the response body, use `checkSqlConnectionsPost$Plain()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  getSqlConnectionsPost$Plain$Response(params?: {
+  checkSqlConnectionsPost$Plain$Response(params?: {
     body?: GetDatabasesParams
   }): Observable<StrictHttpResponse<boolean>> {
 
-    const rb = new RequestBuilder(this.rootUrl, SqlService.GetSqlConnectionsPostPath, 'post');
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CheckSqlConnectionsPostPath, 'post');
     if (params) {
       rb.body(params.body, 'application/*+json');
     }
@@ -143,30 +144,30 @@ export class SqlService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `getSqlConnectionsPost$Plain$Response()` instead.
+   * To access the full response (for headers, for example), `checkSqlConnectionsPost$Plain$Response()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  getSqlConnectionsPost$Plain(params?: {
+  checkSqlConnectionsPost$Plain(params?: {
     body?: GetDatabasesParams
   }): Observable<boolean> {
 
-    return this.getSqlConnectionsPost$Plain$Response(params).pipe(
+    return this.checkSqlConnectionsPost$Plain$Response(params).pipe(
       map((r: StrictHttpResponse<boolean>) => r.body as boolean)
     );
   }
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getSqlConnectionsPost$Json()` instead.
+   * To access only the response body, use `checkSqlConnectionsPost$Json()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  getSqlConnectionsPost$Json$Response(params?: {
+  checkSqlConnectionsPost$Json$Response(params?: {
     body?: GetDatabasesParams
   }): Observable<StrictHttpResponse<boolean>> {
 
-    const rb = new RequestBuilder(this.rootUrl, SqlService.GetSqlConnectionsPostPath, 'post');
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CheckSqlConnectionsPostPath, 'post');
     if (params) {
       rb.body(params.body, 'application/*+json');
     }
@@ -184,16 +185,190 @@ export class SqlService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `getSqlConnectionsPost$Json$Response()` instead.
+   * To access the full response (for headers, for example), `checkSqlConnectionsPost$Json$Response()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  getSqlConnectionsPost$Json(params?: {
+  checkSqlConnectionsPost$Json(params?: {
     body?: GetDatabasesParams
   }): Observable<boolean> {
 
-    return this.getSqlConnectionsPost$Json$Response(params).pipe(
+    return this.checkSqlConnectionsPost$Json$Response(params).pipe(
       map((r: StrictHttpResponse<boolean>) => r.body as boolean)
+    );
+  }
+
+  /**
+   * Path part for operation checkDatabaseExistPost
+   */
+  static readonly CheckDatabaseExistPostPath = '/checkDatabaseExist';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `checkDatabaseExistPost$Plain()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  checkDatabaseExistPost$Plain$Response(params?: {
+    body?: DbConfig
+  }): Observable<StrictHttpResponse<boolean>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CheckDatabaseExistPostPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/*+json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'text',
+      accept: 'text/plain'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({ body: String((r as HttpResponse<any>).body) === 'true' }) as StrictHttpResponse<boolean>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `checkDatabaseExistPost$Plain$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  checkDatabaseExistPost$Plain(params?: {
+    body?: DbConfig
+  }): Observable<boolean> {
+
+    return this.checkDatabaseExistPost$Plain$Response(params).pipe(
+      map((r: StrictHttpResponse<boolean>) => r.body as boolean)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `checkDatabaseExistPost$Json()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  checkDatabaseExistPost$Json$Response(params?: {
+    body?: DbConfig
+  }): Observable<StrictHttpResponse<boolean>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CheckDatabaseExistPostPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/*+json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'text/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({ body: String((r as HttpResponse<any>).body) === 'true' }) as StrictHttpResponse<boolean>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `checkDatabaseExistPost$Json$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  checkDatabaseExistPost$Json(params?: {
+    body?: DbConfig
+  }): Observable<boolean> {
+
+    return this.checkDatabaseExistPost$Json$Response(params).pipe(
+      map((r: StrictHttpResponse<boolean>) => r.body as boolean)
+    );
+  }
+
+  /**
+   * Path part for operation createNewDbPost
+   */
+  static readonly CreateNewDbPostPath = '/createNewDB';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createNewDbPost$Plain()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  createNewDbPost$Plain$Response(params?: {
+    body?: DbConfig
+  }): Observable<StrictHttpResponse<string>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CreateNewDbPostPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/*+json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'text',
+      accept: 'text/plain'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<string>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `createNewDbPost$Plain$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  createNewDbPost$Plain(params?: {
+    body?: DbConfig
+  }): Observable<string> {
+
+    return this.createNewDbPost$Plain$Response(params).pipe(
+      map((r: StrictHttpResponse<string>) => r.body as string)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createNewDbPost$Json()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  createNewDbPost$Json$Response(params?: {
+    body?: DbConfig
+  }): Observable<StrictHttpResponse<string>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SqlService.CreateNewDbPostPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/*+json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'text/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<string>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `createNewDbPost$Json$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  createNewDbPost$Json(params?: {
+    body?: DbConfig
+  }): Observable<string> {
+
+    return this.createNewDbPost$Json$Response(params).pipe(
+      map((r: StrictHttpResponse<string>) => r.body as string)
     );
   }
 

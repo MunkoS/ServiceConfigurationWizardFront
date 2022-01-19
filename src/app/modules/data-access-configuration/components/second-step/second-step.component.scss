@@ -1,3 +1,80 @@
 :host{
-  padding: 10px 30px 10px 10px;
+  flex-direction: column;
+  padding: 30px 10px 10px 10px;
+  display: flex;
+  height: 100%;
+}
+
+.gray {
+  color: gray !important;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.text {
+  font-size: 18px;
+  color: black;
+}
+
+
+mat-progress-bar {
+  margin-top: 5px;
+  width: 80%;
+  background: #53b2b2;
+}
+
+.table {
+  padding: 10px;
+  grid-gap: 5px;
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  border: 2px solid black;
+  width: 96%;
+  height: 180px;
+  margin-top: 10px;
+  grid-auto-rows: min-content;
+}
+
+.table-hl {
+  height: 2px;
+  background: black;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.row {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  grid-auto-rows: min-content;
+  grid-gap: 5px;
+}
+
+
+.first-column {
+  display: flex;
+  justify-content: flex-start;
+  grid-gap: 10px;
+}
+
+.second-column {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10px;
+}
+
+.mrl25{
+  margin-left: 25px;
+}
+
+.child-row{
+  grid-column-start: 2;
+  grid-column-end: 3;
 }

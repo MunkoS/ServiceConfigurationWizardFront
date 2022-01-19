@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MainComponent } from './components/main/main.component';
 import { DataAccessConfigurationModuleRoutingModule } from './data-access-configuration-routing.module';
 import { FirstStepComponent } from './components/first-step/first-step.component';
@@ -12,6 +13,14 @@ import { SecondStepComponent } from './components/second-step/second-step.compon
 
 @NgModule({
   declarations: [MainComponent, FirstStepComponent, FormComponent, SecondStepComponent],
-  imports: [CommonModule, DataAccessConfigurationModuleRoutingModule, FontAwesomeModule, ReactiveFormsModule, SelectModule, NgLetModule]
+  imports: [
+    CommonModule,
+    DataAccessConfigurationModuleRoutingModule,
+    FontAwesomeModule,
+    ReactiveFormsModule,
+    SelectModule,
+    NgLetModule,
+    MatProgressBarModule
+  ]
 })
 export class DataAccessConfigurationModule {}

@@ -1,1 +1,84 @@
-Прогресс выполнения
+<span  class="text gray"
+  >Прогресс выполнения: <span class="text">{{ currentOperationName }}</span>
+</span>
+
+<mat-progress-bar mode="determinate" [value]="progressBarValue" ></mat-progress-bar>
+
+
+<div class="table">
+  <span class="text mrl25">Этап</span>
+  <span class="text">Сообщение</span>
+  <div class="table-hl"></div>
+
+  <ng-container
+    *ngTemplateOutlet="
+      rowTemplate;
+      context: {
+        operationInfo: operationsInfo.db
+      }
+    "
+  ></ng-container>
+
+  <ng-container
+    *ngTemplateOutlet="
+      rowTemplate;
+      context: {
+        operationInfo: operationsInfo.das
+      }
+    "
+  ></ng-container>
+
+  <ng-container
+    *ngTemplateOutlet="
+      rowTemplate;
+      context: {
+        operationInfo: operationsInfo.sql
+      }
+    "
+  ></ng-container>
+
+</div>
+
+<div class="footer">
+  <button class="custom-button">
+    <fa-icon class="button-icon fa-lg" [icon]="closeButtonBack"></fa-icon>
+    <span class="text" (click)="back()">Назад </span>
+  </button>
+  <button *ngIf="showCancelButton" class="custom-button cancel-button" routerLink="/">
+    <fa-icon class="button-icon fa-lg" [icon]="closeButtonIcon"></fa-icon>
+    <span class="text" >Прервать</span>
+  </button>
+</div>
+
+<ng-template #rowTemplate let-operationInfo="operationInfo">
+  <div class="row">
+    <span class="text first-column">
+      <fa-icon class="gray" (click)="operationInfo.showMessage = !operationInfo.showMessage" [icon]="!operationInfo.showMessage ? iconDown : iconUp"></fa-icon>
+      {{ operationInfo.title }}
+    </span>
+    <span class="text second-column"
+      >{{ operationInfo.operationStatus }}
+      <ng-container
+        *ngTemplateOutlet="
+          iconTemplate;
+          context: {
+            operationStatus: operationInfo.operationStatus
+          }
+        "
+      ></ng-container>
+    </span>
+    <div class="child-row text" *ngIf="operationInfo.showMessage">
+      {{
+        operationInfo.message
+      }}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #iconTemplate let-operationStatus="operationStatus">
+  <ng-container [ngSwitch]="operationStatus">
+    <fa-icon *ngSwitchCase="loadingOperation" class="gray  fa-spin" [icon]="iconLoad"></fa-icon>
+    <fa-icon *ngSwitchCase="errorOperation" class="gray" [icon]="iconError"></fa-icon>
+    <fa-icon *ngSwitchCase="successOperation" class="green" [icon]="iconSuccess"></fa-icon>
+  </ng-container>
+</ng-template>

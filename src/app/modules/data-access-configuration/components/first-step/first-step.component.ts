@@ -17,7 +17,6 @@ import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 export class FirstStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
   private _bdNames: string[] | undefined;
-
   @Output() public readonly secondStep = new EventEmitter<DbConfig>();
 
   public formChange = false;
@@ -94,9 +93,9 @@ export class FirstStepComponent implements OnInit, OnDestroy {
     }
     this.sqlConnectionCheck = true;
     this.disableFields();
-
+    this.cdr.detectChanges();
     return this.sqlService
-      .getSqlConnectionsPost$Json({
+      .checkSqlConnectionsPost$Json({
         body: {
           password: this.securityGroup?.password?.value,
           dataSource: this.securityGroup?.dataSource?.value,
@@ -123,7 +122,6 @@ export class FirstStepComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.disableFields();
-    this.downloadBdOptions();
     this.form
       .get('dbName')
       ?.valueChanges.pipe(takeUntil(this._destroy$))
@@ -156,11 +154,20 @@ export class FirstStepComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$),
         switchMap(res => {
           if (res) {
-            this.securityGroup?.dataSource?.setValue(res.hostName);
-            this.securityGroup?.login?.setValue(res.userName);
-            this.securityGroup?.password?.setValue(res.password);
-            this.form?.get('dbName')?.setValue(res.dbName);
+            this.securityGroup?.dataSource?.setValue(res.hostName, {
+              emitEvent: false
+            });
+            this.securityGroup?.login?.setValue(res.userName, {
+              emitEvent: false
+            });
+            this.securityGroup?.password?.setValue(res.password, {
+              emitEvent: false
+            });
+            this.form?.get('dbName')?.setValue(res.dbName, {
+              emitEvent: false
+            });
           }
+          this.downloadBdOptions();
           return this.checkSqlConnections();
         }),
         catchError(() => {
@@ -193,6 +200,9 @@ export class FirstStepComponent implements OnInit, OnDestroy {
         map(res => {
           this.bdLoading = false;
           this._bdNames = res.map(x => x.title ?? '');
+          this.createNewBd = !this._bdNames?.find(x => x === this.form?.get('dbName')?.value);
+          this.cdr.detectChanges();
+
           return res.map(x => {
             const res: SelectModel = {
               title: x.title ?? '',
@@ -214,8 +224,8 @@ export class FirstStepComponent implements OnInit, OnDestroy {
     this.secondStep.emit({
       password: this.securityGroup?.password?.value,
       hostName: this.securityGroup?.dataSource?.value,
-      dbName: this.securityGroup?.login?.value,
-      userName: this.form.get('dbName')?.value
+      dbName: this.form.get('dbName')?.value,
+      userName: this.securityGroup?.login?.value
     });
   }
 
