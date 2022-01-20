@@ -36,7 +36,7 @@
 
 
 
-  <div *ngIf="sqlConnectionCheck" class="text new-bd">Выполняется проверка связи с SQL сервером...</div>
+  <div *ngIf="sqlConnectionCheck" class="check-sql text new-bd">Выполняется проверка связи с SQL сервером...     <fa-icon class="fa-spin" [icon]="iconLoad"></fa-icon></div>
   <div class="footer">
     <button class="custom-button"  *ngIf="form.valid && !sqlConnectionCheck && !sqlError" (click)="next()">
       <fa-icon class="button-icon fa-lg" [icon]="checkButtonIcon"></fa-icon>

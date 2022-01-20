@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, debounceTime, Observable, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
   private _bdNames: string[] | undefined;
   @Output() public readonly secondStep = new EventEmitter<DbConfig>();
-
+  public iconLoad = faSyncAlt;
   public formChange = false;
 
   public sqlConnectionCheck = false;
@@ -30,7 +30,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
 
   public form: FormGroup = new FormGroup({
     security: new FormGroup({
-      dataSource: new FormControl('(localdb)\\MSSQLLocalDB', Validators.required),
+      dataSource: new FormControl('localhost', Validators.required),
       login: new FormControl('prgacc', Validators.required),
       password: new FormControl('account', Validators.required)
     }),

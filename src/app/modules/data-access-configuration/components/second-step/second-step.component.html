@@ -1,3 +1,5 @@
+
+
 <span  class="text gray"
   >Прогресс выполнения: <span class="text">{{ currentOperationName }}</span>
 </span>
@@ -47,6 +49,11 @@
   <button *ngIf="showCancelButton" class="custom-button cancel-button" routerLink="/">
     <fa-icon class="button-icon fa-lg" [icon]="closeButtonIcon"></fa-icon>
     <span class="text" >Прервать</span>
+  </button>
+
+  <button *ngIf="!showCancelButton" class="custom-button cancel-button" routerLink="/">
+    <fa-icon class="button-icon fa-lg" [icon]="closeButtonIcon"></fa-icon>
+    <span class="text" >Закрыть</span>
   </button>
 </div>
 

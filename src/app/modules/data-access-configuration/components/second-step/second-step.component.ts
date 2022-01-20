@@ -121,6 +121,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                     this.operationsInfo.das.operationStatus = OperationStatus.success;
                     this.operationsInfo.db.message = 'База данных существует';
                     this.currentOperationName = 'Все проверки выполнены: База данных существует';
+                    this.showCancelButton = false;
                     this.cdr.detectChanges();
                     return this.saveConfig();
                   }
@@ -134,6 +135,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                         this.operationsInfo.das.operationStatus = OperationStatus.success;
                         this.operationsInfo.das.message = OperationStatus.success;
                         this.progressBarValue = 100;
+                        this.showCancelButton = true;
                         this.cdr.detectChanges();
                         return this.sqlService
                           .createNewDbPost$Json({
@@ -174,7 +176,6 @@ export class SecondStepComponent implements OnInit, OnDestroy {
       )
       .pipe(take(1), takeUntil(this._destroy$))
       .subscribe(() => {
-        this.showCancelButton = false;
         this.cdr.detectChanges();
       });
   }
