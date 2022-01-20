@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { faTimes, faCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { faCheck, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, debounceTime, Observable, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -7,6 +7,8 @@ import { DbConfigService } from '../../../api/ng-openapi/services/db-config.serv
 import { SelectModel } from '../../../shared/select/models/select';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
 import { DbConfig } from '../../../api/ng-openapi/models/db-config';
+import { ServicesName } from '../../../api/ng-openapi/models/services-name';
+import { JournalConfigService } from '../../../api/ng-openapi/services/journal-config.service';
 
 @Component({
   selector: 'first-step',
@@ -17,9 +19,10 @@ import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 export class FirstStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
   private _bdNames: string[] | undefined;
+  @Input() public service: ServicesName | undefined;
   @Output() public readonly secondStep = new EventEmitter<DbConfig>();
   public iconLoad = faSyncAlt;
-  public formChange = false;
+  public formChange = true;
 
   public sqlConnectionCheck = false;
   public createNewBd = false;
@@ -41,7 +44,12 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   public bdOptions$: Observable<SelectModel[]> | undefined;
   public sqlError = false;
 
-  constructor(private dbConfigService: DbConfigService, private sqlService: SqlService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private dbConfigService: DbConfigService,
+    private journalConfigService: JournalConfigService,
+    private sqlService: SqlService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   private noWhitespaceValidator(control: FormControl) {
     if (control.value) {
@@ -147,42 +155,49 @@ export class FirstStepComponent implements OnInit, OnDestroy {
 
       .subscribe();
 
-    this.dbConfigService
-      .dbConfigGet$Json()
-      .pipe(
-        take(1),
-        takeUntil(this._destroy$),
-        switchMap(res => {
-          if (res) {
-            this.securityGroup?.dataSource?.setValue(res.hostName, {
-              emitEvent: false
-            });
-            this.securityGroup?.login?.setValue(res.userName, {
-              emitEvent: false
-            });
-            this.securityGroup?.password?.setValue(res.password, {
-              emitEvent: false
-            });
-            this.form?.get('dbName')?.setValue(res.dbName, {
-              emitEvent: false
-            });
-          }
-          this.downloadBdOptions();
-          return this.checkSqlConnections();
-        }),
-        catchError(() => {
-          this.sqlError = true;
-          this.sqlConnectionCheck = false;
-          this.enableFields();
-          this.cdr.detectChanges();
-          return of(false);
-        })
-      )
-      .subscribe();
+    let currentConfig = null;
+    if (this.service === ServicesName.DaService) {
+      currentConfig = this.dbConfigService.dbConfigGet$Json();
+    } else if (this.service === ServicesName.MirJournalService) {
+      currentConfig = this.journalConfigService.journalConfigGet$Json();
+    }
+    if (currentConfig) {
+      currentConfig
+        .pipe(
+          take(1),
+          takeUntil(this._destroy$),
+          switchMap(res => {
+            if (res) {
+              this.securityGroup?.dataSource?.setValue(res.hostName, {
+                emitEvent: false
+              });
+              this.securityGroup?.login?.setValue(res.userName, {
+                emitEvent: false
+              });
+              this.securityGroup?.password?.setValue(res.password, {
+                emitEvent: false
+              });
+              this.form?.get('dbName')?.setValue(res.dbName, {
+                emitEvent: false
+              });
+            }
+            this.downloadBdOptions();
+            return this.checkSqlConnections();
+          }),
+          catchError(() => {
+            this.sqlError = true;
+            this.sqlConnectionCheck = false;
+            this.enableFields();
+            this.cdr.detectChanges();
+            return of(false);
+          })
+        )
+        .subscribe();
+    }
   }
 
   public downloadBdOptions(): void {
-    if (this.formChange) {
+    if (!this.formChange) {
       return;
     }
     this.formChange = false;

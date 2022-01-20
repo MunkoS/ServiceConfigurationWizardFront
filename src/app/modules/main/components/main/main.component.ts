@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ServicesName } from '../../../api/ng-openapi/models';
 
 @Component({
   selector: 'app-main',
@@ -6,4 +7,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./main.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainComponent {}
+export class MainComponent {
+  public dasUrl = `/dataAccessConfiguration/${ServicesName.DaService}`;
+  public journalUrl = `/dataAccessConfiguration/${ServicesName.MirJournalService}`;
+}

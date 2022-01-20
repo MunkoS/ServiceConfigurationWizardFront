@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'dataAccessConfiguration',
+    path: 'dataAccessConfiguration/:serviceName',
     loadChildren: () => import('./modules/data-access-configuration/data-access-configuration.module').then(x => x.DataAccessConfigurationModule)
   },
   {

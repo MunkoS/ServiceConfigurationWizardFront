@@ -5,7 +5,8 @@ import { DbConfigService } from '../../../api/ng-openapi/services/db-config.serv
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
 import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 import { OperationStatus, SecondStepInfo } from './model/second-step';
-import { DasServicesService } from '../../../api/ng-openapi/services/das-services.service';
+import { ServicesService } from '../../../api/ng-openapi/services/services.service';
+import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 
 @Component({
   selector: 'second-step',
@@ -15,6 +16,8 @@ import { DasServicesService } from '../../../api/ng-openapi/services/das-service
 })
 export class SecondStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
+
+  @Input() public service: ServicesName | undefined;
   public loadingOperation = OperationStatus.loading;
   public errorOperation = OperationStatus.error;
   public successOperation = OperationStatus.success;
@@ -57,7 +60,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   constructor(
     private dbConfigService: DbConfigService,
     private sqlService: SqlService,
-    private dasService: DasServicesService,
+    private servicesService: ServicesService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -84,14 +87,18 @@ export class SecondStepComponent implements OnInit, OnDestroy {
       .pipe(
         mergeMap(hasSaveDbConfig => {
           if (hasSaveDbConfig) {
-            return this.dasService.restartDasServiceGet$Json().pipe(
-              mergeMap(restartErrorMessage => {
-                if (restartErrorMessage.length !== 0) {
-                  console.error(`Ошибка при перезапуске службы дас!${restartErrorMessage}`);
-                }
-                return EMPTY;
+            return this.servicesService
+              .restartServiceGet$Json({
+                service: this.service
               })
-            );
+              .pipe(
+                mergeMap(restartErrorMessage => {
+                  if (restartErrorMessage.length !== 0) {
+                    console.error(`Ошибка при перезапуске службы дас!${restartErrorMessage}`);
+                  }
+                  return EMPTY;
+                })
+              );
           }
           console.error('Ошибка при сохранении конфига!');
           return EMPTY;
@@ -128,43 +135,50 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                   this.currentOperationName = 'Доступность службы DAService';
                   this.progressBarValue = 66;
                   this.cdr.detectChanges();
-                  return this.dasService.checkDasSericeGet$Json().pipe(
-                    mergeMap(dasErrorMessage => {
-                      if (dasErrorMessage.length === 0) {
-                        this.currentOperationName = 'Все проверки выполнены';
-                        this.operationsInfo.das.operationStatus = OperationStatus.success;
-                        this.operationsInfo.das.message = OperationStatus.success;
-                        this.progressBarValue = 100;
-                        this.showCancelButton = true;
-                        this.cdr.detectChanges();
-                        return this.sqlService
-                          .createNewDbPost$Json({
-                            body: this.dbConfig
-                          })
-                          .pipe(
-                            mergeMap(dbCreateError => {
-                              if (dbCreateError.length === 0) {
-                                this.operationsInfo.db.operationStatus = OperationStatus.success;
-                                this.operationsInfo.db.message = OperationStatus.success;
-                                this.cdr.detectChanges();
-                                this.checkOperations();
-                                return EMPTY;
-                              }
-                              this.operationsInfo.db.operationStatus = OperationStatus.error;
-                              this.operationsInfo.db.message = dbCreateError;
-                              this.cdr.detectChanges();
-                              return EMPTY;
-                            })
-                          );
-                      }
-                      this.operationsInfo.das.operationStatus = OperationStatus.error;
-                      this.operationsInfo.das.message = dasErrorMessage;
-                      this.operationsInfo.db.operationStatus = OperationStatus.error;
-                      this.operationsInfo.db.message = dasErrorMessage;
-                      this.cdr.detectChanges();
-                      return EMPTY;
+                  const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
+                  return this.servicesService
+                    .checkSericePost$Json({
+                      hostName: 'localhost',
+                      serviceName: this.service,
+                      body: ports
                     })
-                  );
+                    .pipe(
+                      mergeMap(dasErrorMessage => {
+                        if (dasErrorMessage.length === 0) {
+                          this.currentOperationName = 'Все проверки выполнены';
+                          this.operationsInfo.das.operationStatus = OperationStatus.success;
+                          this.operationsInfo.das.message = OperationStatus.success;
+                          this.progressBarValue = 100;
+                          this.showCancelButton = true;
+                          this.cdr.detectChanges();
+                          return this.sqlService
+                            .createNewDbPost$Json({
+                              body: this.dbConfig
+                            })
+                            .pipe(
+                              mergeMap(dbCreateError => {
+                                if (dbCreateError.length === 0) {
+                                  this.operationsInfo.db.operationStatus = OperationStatus.success;
+                                  this.operationsInfo.db.message = OperationStatus.success;
+                                  this.cdr.detectChanges();
+                                  this.checkOperations();
+                                  return EMPTY;
+                                }
+                                this.operationsInfo.db.operationStatus = OperationStatus.error;
+                                this.operationsInfo.db.message = dbCreateError;
+                                this.cdr.detectChanges();
+                                return EMPTY;
+                              })
+                            );
+                        }
+                        this.operationsInfo.das.operationStatus = OperationStatus.error;
+                        this.operationsInfo.das.message = dasErrorMessage;
+                        this.operationsInfo.db.operationStatus = OperationStatus.error;
+                        this.operationsInfo.db.message = dasErrorMessage;
+                        this.cdr.detectChanges();
+                        return EMPTY;
+                      })
+                    );
                 })
               );
           }
