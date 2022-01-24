@@ -7,6 +7,7 @@ import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 import { OperationStatus, SecondStepInfo } from './model/second-step';
 import { ServicesService } from '../../../api/ng-openapi/services/services.service';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
+import { JournalConfigService } from '../../../api/ng-openapi/services/journal-config.service';
 
 @Component({
   selector: 'second-step',
@@ -22,29 +23,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   public errorOperation = OperationStatus.error;
   public successOperation = OperationStatus.success;
   public currentOperationName = '';
-  public operationsInfo: SecondStepInfo = {
-    sql: {
-      title: 'Проверка подключения Sql',
-      iconOperation: faSyncAlt,
-      operationStatus: OperationStatus.loading,
-      message: '',
-      showMessage: false
-    },
-    das: {
-      title: 'Подключение DAS',
-      iconOperation: faSyncAlt,
-      operationStatus: OperationStatus.loading,
-      message: '',
-      showMessage: false
-    },
-    db: {
-      title: 'Создание БД',
-      iconOperation: faSyncAlt,
-      operationStatus: OperationStatus.loading,
-      message: 'ntcn',
-      showMessage: false
-    }
-  };
+  public operationsInfo!: SecondStepInfo;
 
   public iconUp = faChevronUp;
   public closeButtonIcon = faTimes;
@@ -58,6 +37,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   public progressBarValue = 0;
   public showCancelButton = true;
   constructor(
+    private journalConfigService: JournalConfigService,
     private dbConfigService: DbConfigService,
     private sqlService: SqlService,
     private servicesService: ServicesService,
@@ -75,35 +55,44 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   }
 
   private saveConfig(): Observable<any> {
-    return this.dbConfigService
-      .dbConfigPatch$Json({
-        body: {
-          password: this.dbConfig?.password,
-          hostName: this.dbConfig?.hostName,
-          userName: this.dbConfig?.userName,
-          dbName: this.dbConfig?.dbName
-        }
-      })
-      .pipe(
-        mergeMap(hasSaveDbConfig => {
-          if (hasSaveDbConfig) {
-            return this.servicesService
-              .restartServiceGet$Json({
-                service: this.service
+    const config =
+      this.service === ServicesName.DaService
+        ? this.dbConfigService.dbConfigPatch$Json({
+            body: {
+              password: this.dbConfig?.password,
+              hostName: this.dbConfig?.hostName,
+              userName: this.dbConfig?.userName,
+              dbName: this.dbConfig?.dbName
+            }
+          })
+        : this.journalConfigService.journalConfigPatch$Json({
+            body: {
+              password: this.dbConfig?.password,
+              hostName: this.dbConfig?.hostName,
+              userName: this.dbConfig?.userName,
+              dbName: this.dbConfig?.dbName
+            }
+          });
+    return config.pipe(
+      mergeMap(hasSaveConfig => {
+        if (hasSaveConfig) {
+          return this.servicesService
+            .restartServiceGet$Json({
+              service: this.service
+            })
+            .pipe(
+              mergeMap(restartErrorMessage => {
+                if (restartErrorMessage.length !== 0) {
+                  console.error(`Ошибка при перезапуске службы ${this.service}!${restartErrorMessage}`);
+                }
+                return EMPTY;
               })
-              .pipe(
-                mergeMap(restartErrorMessage => {
-                  if (restartErrorMessage.length !== 0) {
-                    console.error(`Ошибка при перезапуске службы дас!${restartErrorMessage}`);
-                  }
-                  return EMPTY;
-                })
-              );
-          }
-          console.error('Ошибка при сохранении конфига!');
-          return EMPTY;
-        })
-      );
+            );
+        }
+        console.error('Ошибка при сохранении конфига!');
+        return EMPTY;
+      })
+    );
   }
 
   private checkOperations(): void {
@@ -125,14 +114,14 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                   if (isExistDb) {
                     this.progressBarValue = 100;
                     this.operationsInfo.db.operationStatus = OperationStatus.success;
-                    this.operationsInfo.das.operationStatus = OperationStatus.success;
+                    this.operationsInfo.service.operationStatus = OperationStatus.success;
                     this.operationsInfo.db.message = 'База данных существует';
                     this.currentOperationName = 'Все проверки выполнены: База данных существует';
                     this.showCancelButton = false;
                     this.cdr.detectChanges();
                     return this.saveConfig();
                   }
-                  this.currentOperationName = 'Доступность службы DAService';
+                  this.currentOperationName = `Доступность службы ${this.service}`;
                   this.progressBarValue = 66;
                   this.cdr.detectChanges();
                   const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
@@ -143,11 +132,11 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                       body: ports
                     })
                     .pipe(
-                      mergeMap(dasErrorMessage => {
-                        if (dasErrorMessage.length === 0) {
+                      mergeMap(serviceErrorMessage => {
+                        if (serviceErrorMessage.length === 0) {
                           this.currentOperationName = 'Все проверки выполнены';
-                          this.operationsInfo.das.operationStatus = OperationStatus.success;
-                          this.operationsInfo.das.message = OperationStatus.success;
+                          this.operationsInfo.service.operationStatus = OperationStatus.success;
+                          this.operationsInfo.service.message = OperationStatus.success;
                           this.progressBarValue = 100;
                           this.showCancelButton = true;
                           this.cdr.detectChanges();
@@ -171,10 +160,10 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                               })
                             );
                         }
-                        this.operationsInfo.das.operationStatus = OperationStatus.error;
-                        this.operationsInfo.das.message = dasErrorMessage;
+                        this.operationsInfo.service.operationStatus = OperationStatus.error;
+                        this.operationsInfo.service.message = serviceErrorMessage;
                         this.operationsInfo.db.operationStatus = OperationStatus.error;
-                        this.operationsInfo.db.message = dasErrorMessage;
+                        this.operationsInfo.db.message = serviceErrorMessage;
                         this.cdr.detectChanges();
                         return EMPTY;
                       })
@@ -195,6 +184,29 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.operationsInfo = {
+      sql: {
+        title: 'Проверка подключения Sql',
+        iconOperation: faSyncAlt,
+        operationStatus: OperationStatus.loading,
+        message: '',
+        showMessage: false
+      },
+      service: {
+        title: `Подключение ${this.service}`,
+        iconOperation: faSyncAlt,
+        operationStatus: OperationStatus.loading,
+        message: '',
+        showMessage: false
+      },
+      db: {
+        title: 'Создание БД',
+        iconOperation: faSyncAlt,
+        operationStatus: OperationStatus.loading,
+        message: 'ntcn',
+        showMessage: false
+      }
+    };
     this.currentOperationName = 'Проверка подключения к Sql';
     this.checkOperations();
     this.cdr.detectChanges();

@@ -16,6 +16,6 @@ type OperationInfo = {
 
 export type SecondStepInfo = {
   sql: OperationInfo;
-  das: OperationInfo;
+  service: OperationInfo;
   db: OperationInfo;
 };
