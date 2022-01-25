@@ -9,7 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { DbConfig } from '../models/db-config';
+import { ConfigInfo } from '../models/config-info';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +34,7 @@ export class JournalConfigService extends BaseService {
    * This method doesn't expect any request body.
    */
   journalConfigGet$Plain$Response(params?: {
-  }): Observable<StrictHttpResponse<DbConfig>> {
+  }): Observable<StrictHttpResponse<ConfigInfo>> {
 
     const rb = new RequestBuilder(this.rootUrl, JournalConfigService.JournalConfigGetPath, 'get');
     if (params) {
@@ -46,7 +46,7 @@ export class JournalConfigService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<DbConfig>;
+        return r as StrictHttpResponse<ConfigInfo>;
       })
     );
   }
@@ -58,10 +58,10 @@ export class JournalConfigService extends BaseService {
    * This method doesn't expect any request body.
    */
   journalConfigGet$Plain(params?: {
-  }): Observable<DbConfig> {
+  }): Observable<ConfigInfo> {
 
     return this.journalConfigGet$Plain$Response(params).pipe(
-      map((r: StrictHttpResponse<DbConfig>) => r.body as DbConfig)
+      map((r: StrictHttpResponse<ConfigInfo>) => r.body as ConfigInfo)
     );
   }
 
@@ -72,7 +72,7 @@ export class JournalConfigService extends BaseService {
    * This method doesn't expect any request body.
    */
   journalConfigGet$Json$Response(params?: {
-  }): Observable<StrictHttpResponse<DbConfig>> {
+  }): Observable<StrictHttpResponse<ConfigInfo>> {
 
     const rb = new RequestBuilder(this.rootUrl, JournalConfigService.JournalConfigGetPath, 'get');
     if (params) {
@@ -84,7 +84,7 @@ export class JournalConfigService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<DbConfig>;
+        return r as StrictHttpResponse<ConfigInfo>;
       })
     );
   }
@@ -96,10 +96,10 @@ export class JournalConfigService extends BaseService {
    * This method doesn't expect any request body.
    */
   journalConfigGet$Json(params?: {
-  }): Observable<DbConfig> {
+  }): Observable<ConfigInfo> {
 
     return this.journalConfigGet$Json$Response(params).pipe(
-      map((r: StrictHttpResponse<DbConfig>) => r.body as DbConfig)
+      map((r: StrictHttpResponse<ConfigInfo>) => r.body as ConfigInfo)
     );
   }
 
@@ -115,7 +115,7 @@ export class JournalConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   journalConfigPatch$Plain$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, JournalConfigService.JournalConfigPatchPath, 'patch');
@@ -141,7 +141,7 @@ export class JournalConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   journalConfigPatch$Plain(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<boolean> {
 
     return this.journalConfigPatch$Plain$Response(params).pipe(
@@ -156,7 +156,7 @@ export class JournalConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   journalConfigPatch$Json$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, JournalConfigService.JournalConfigPatchPath, 'patch');
@@ -182,7 +182,7 @@ export class JournalConfigService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   journalConfigPatch$Json(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<boolean> {
 
     return this.journalConfigPatch$Json$Response(params).pipe(

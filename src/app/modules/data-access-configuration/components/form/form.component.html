@@ -8,5 +8,5 @@
   </div>
   <div class="hl"></div>
   <first-step [service]="currentService" *ngIf="!secondStep" (secondStep)="goSecondStep($event)"></first-step>
-  <second-step [service]="currentService" *ngIf="secondStep" (firstStep)="secondStep = !secondStep" [dbConfig]="dbConfig"></second-step>
+  <second-step [service]="currentService" *ngIf="secondStep" (firstStep)="secondStep = !secondStep" [config]="config"></second-step>
 </div>

@@ -6,9 +6,10 @@ import { map } from 'rxjs/operators';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SelectModel } from '../../../shared/select/models/select';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
-import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 import { JournalConfigService } from '../../../api/ng-openapi/services/journal-config.service';
+import { ConfigInfo } from '../../../api/ng-openapi/models/config-info';
+import { DispatcherConfigService } from '../../../api/ng-openapi/services/dispatcher-config.service';
 
 @Component({
   selector: 'first-step',
@@ -20,7 +21,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
   private _bdNames: string[] | undefined;
   @Input() public service: ServicesName | undefined;
-  @Output() public readonly secondStep = new EventEmitter<DbConfig>();
+  @Output() public readonly secondStep = new EventEmitter<ConfigInfo>();
   public iconLoad = faSyncAlt;
   public formChange = true;
 
@@ -47,6 +48,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
   constructor(
     private dbConfigService: DbConfigService,
     private journalConfigService: JournalConfigService,
+    private dispatcherConfigService: DispatcherConfigService,
     private sqlService: SqlService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -160,6 +162,8 @@ export class FirstStepComponent implements OnInit, OnDestroy {
       currentConfig = this.dbConfigService.dbConfigGet$Json();
     } else if (this.service === ServicesName.MirJournalService) {
       currentConfig = this.journalConfigService.journalConfigGet$Json();
+    } else if (this.service === ServicesName.Energy) {
+      currentConfig = this.dispatcherConfigService.dispatcherConfigGet$Json();
     }
     if (currentConfig) {
       currentConfig

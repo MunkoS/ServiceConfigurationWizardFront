@@ -9,8 +9,8 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { ConfigInfo } from '../models/config-info';
 import { Databases } from '../models/databases';
-import { DbConfig } from '../models/db-config';
 import { GetDatabasesParams } from '../models/get-databases-params';
 
 @Injectable({
@@ -210,7 +210,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   checkDatabaseExistPost$Plain$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, SqlService.CheckDatabaseExistPostPath, 'post');
@@ -236,7 +236,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   checkDatabaseExistPost$Plain(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<boolean> {
 
     return this.checkDatabaseExistPost$Plain$Response(params).pipe(
@@ -251,7 +251,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   checkDatabaseExistPost$Json$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
     const rb = new RequestBuilder(this.rootUrl, SqlService.CheckDatabaseExistPostPath, 'post');
@@ -277,7 +277,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   checkDatabaseExistPost$Json(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<boolean> {
 
     return this.checkDatabaseExistPost$Json$Response(params).pipe(
@@ -297,7 +297,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   createNewDbPost$Plain$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<string>> {
 
     const rb = new RequestBuilder(this.rootUrl, SqlService.CreateNewDbPostPath, 'post');
@@ -323,7 +323,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   createNewDbPost$Plain(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<string> {
 
     return this.createNewDbPost$Plain$Response(params).pipe(
@@ -338,7 +338,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   createNewDbPost$Json$Response(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<StrictHttpResponse<string>> {
 
     const rb = new RequestBuilder(this.rootUrl, SqlService.CreateNewDbPostPath, 'post');
@@ -364,7 +364,7 @@ export class SqlService extends BaseService {
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
   createNewDbPost$Json(params?: {
-    body?: DbConfig
+    body?: ConfigInfo
   }): Observable<string> {
 
     return this.createNewDbPost$Json$Response(params).pipe(

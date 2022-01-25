@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { faBoxOpen, faWindowClose } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
-import { DbConfig } from '../../../api/ng-openapi/models/db-config';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
+import { ConfigInfo } from '../../../api/ng-openapi/models/config-info';
 
 @Component({
   selector: 'main-form',
@@ -13,7 +13,7 @@ import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 export class FormComponent implements OnInit {
   public boxIcon = faBoxOpen;
   public closeIcon = faWindowClose;
-  public dbConfig: DbConfig | undefined;
+  public config: ConfigInfo | undefined;
   public secondStep = false;
   public title: string | undefined;
   public currentService: ServicesName | undefined;
@@ -29,12 +29,15 @@ export class FormComponent implements OnInit {
       } else if (ServicesName.DaService === serviceName) {
         this.currentService = ServicesName.DaService;
         this.title = 'Мастер настройки службы доступа к данным';
+      } else if (ServicesName.Energy === serviceName) {
+        this.currentService = ServicesName.Energy;
+        this.title = 'Мастер настройки Модуля ЭНЕРГИЯ';
       }
       this.cdr.detectChanges();
     }
   }
-  public goSecondStep(dbConfg: DbConfig): void {
-    this.dbConfig = dbConfg;
+  public goSecondStep(dbConfg: ConfigInfo): void {
+    this.config = dbConfg;
     this.secondStep = true;
     this.cdr.detectChanges();
   }

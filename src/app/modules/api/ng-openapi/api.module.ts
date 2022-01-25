@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { DbConfigService } from './services/db-config.service';
+import { DispatcherConfigService } from './services/dispatcher-config.service';
 import { JournalConfigService } from './services/journal-config.service';
 import { ServicesService } from './services/services.service';
 import { SqlService } from './services/sql.service';
@@ -18,6 +19,7 @@ import { SqlService } from './services/sql.service';
   declarations: [],
   providers: [
     DbConfigService,
+    DispatcherConfigService,
     JournalConfigService,
     ServicesService,
     SqlService,

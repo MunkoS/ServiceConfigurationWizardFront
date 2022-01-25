@@ -14,7 +14,7 @@ import { ConfigInfo } from '../models/config-info';
 @Injectable({
   providedIn: 'root',
 })
-export class DbConfigService extends BaseService {
+export class DispatcherConfigService extends BaseService {
   constructor(
     config: ApiConfiguration,
     http: HttpClient
@@ -23,20 +23,20 @@ export class DbConfigService extends BaseService {
   }
 
   /**
-   * Path part for operation dbConfigGet
+   * Path part for operation dispatcherConfigGet
    */
-  static readonly DbConfigGetPath = '/DbConfig';
+  static readonly DispatcherConfigGetPath = '/DispatcherConfig';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `dbConfigGet$Plain()` instead.
+   * To access only the response body, use `dispatcherConfigGet$Plain()` instead.
    *
    * This method doesn't expect any request body.
    */
-  dbConfigGet$Plain$Response(params?: {
+  dispatcherConfigGet$Plain$Response(params?: {
   }): Observable<StrictHttpResponse<ConfigInfo>> {
 
-    const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigGetPath, 'get');
+    const rb = new RequestBuilder(this.rootUrl, DispatcherConfigService.DispatcherConfigGetPath, 'get');
     if (params) {
     }
 
@@ -53,28 +53,28 @@ export class DbConfigService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `dbConfigGet$Plain$Response()` instead.
+   * To access the full response (for headers, for example), `dispatcherConfigGet$Plain$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  dbConfigGet$Plain(params?: {
+  dispatcherConfigGet$Plain(params?: {
   }): Observable<ConfigInfo> {
 
-    return this.dbConfigGet$Plain$Response(params).pipe(
+    return this.dispatcherConfigGet$Plain$Response(params).pipe(
       map((r: StrictHttpResponse<ConfigInfo>) => r.body as ConfigInfo)
     );
   }
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `dbConfigGet$Json()` instead.
+   * To access only the response body, use `dispatcherConfigGet$Json()` instead.
    *
    * This method doesn't expect any request body.
    */
-  dbConfigGet$Json$Response(params?: {
+  dispatcherConfigGet$Json$Response(params?: {
   }): Observable<StrictHttpResponse<ConfigInfo>> {
 
-    const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigGetPath, 'get');
+    const rb = new RequestBuilder(this.rootUrl, DispatcherConfigService.DispatcherConfigGetPath, 'get');
     if (params) {
     }
 
@@ -91,34 +91,34 @@ export class DbConfigService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `dbConfigGet$Json$Response()` instead.
+   * To access the full response (for headers, for example), `dispatcherConfigGet$Json$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  dbConfigGet$Json(params?: {
+  dispatcherConfigGet$Json(params?: {
   }): Observable<ConfigInfo> {
 
-    return this.dbConfigGet$Json$Response(params).pipe(
+    return this.dispatcherConfigGet$Json$Response(params).pipe(
       map((r: StrictHttpResponse<ConfigInfo>) => r.body as ConfigInfo)
     );
   }
 
   /**
-   * Path part for operation dbConfigPatch
+   * Path part for operation dispatcherConfigPatch
    */
-  static readonly DbConfigPatchPath = '/DbConfig';
+  static readonly DispatcherConfigPatchPath = '/DispatcherConfig';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `dbConfigPatch$Plain()` instead.
+   * To access only the response body, use `dispatcherConfigPatch$Plain()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  dbConfigPatch$Plain$Response(params?: {
+  dispatcherConfigPatch$Plain$Response(params?: {
     body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
-    const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
+    const rb = new RequestBuilder(this.rootUrl, DispatcherConfigService.DispatcherConfigPatchPath, 'patch');
     if (params) {
       rb.body(params.body, 'application/*+json');
     }
@@ -136,30 +136,30 @@ export class DbConfigService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `dbConfigPatch$Plain$Response()` instead.
+   * To access the full response (for headers, for example), `dispatcherConfigPatch$Plain$Response()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  dbConfigPatch$Plain(params?: {
+  dispatcherConfigPatch$Plain(params?: {
     body?: ConfigInfo
   }): Observable<boolean> {
 
-    return this.dbConfigPatch$Plain$Response(params).pipe(
+    return this.dispatcherConfigPatch$Plain$Response(params).pipe(
       map((r: StrictHttpResponse<boolean>) => r.body as boolean)
     );
   }
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `dbConfigPatch$Json()` instead.
+   * To access only the response body, use `dispatcherConfigPatch$Json()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  dbConfigPatch$Json$Response(params?: {
+  dispatcherConfigPatch$Json$Response(params?: {
     body?: ConfigInfo
   }): Observable<StrictHttpResponse<boolean>> {
 
-    const rb = new RequestBuilder(this.rootUrl, DbConfigService.DbConfigPatchPath, 'patch');
+    const rb = new RequestBuilder(this.rootUrl, DispatcherConfigService.DispatcherConfigPatchPath, 'patch');
     if (params) {
       rb.body(params.body, 'application/*+json');
     }
@@ -177,15 +177,15 @@ export class DbConfigService extends BaseService {
 
   /**
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `dbConfigPatch$Json$Response()` instead.
+   * To access the full response (for headers, for example), `dispatcherConfigPatch$Json$Response()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  dbConfigPatch$Json(params?: {
+  dispatcherConfigPatch$Json(params?: {
     body?: ConfigInfo
   }): Observable<boolean> {
 
-    return this.dbConfigPatch$Json$Response(params).pipe(
+    return this.dispatcherConfigPatch$Json$Response(params).pipe(
       map((r: StrictHttpResponse<boolean>) => r.body as boolean)
     );
   }

@@ -10,4 +10,5 @@ import { ServicesName } from '../../../api/ng-openapi/models';
 export class MainComponent {
   public dasUrl = `/dataAccessConfiguration/${ServicesName.DaService}`;
   public journalUrl = `/dataAccessConfiguration/${ServicesName.MirJournalService}`;
+  public energyUrl = `/dataAccessConfiguration/${ServicesName.Energy}`;
 }

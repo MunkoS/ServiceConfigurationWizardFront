@@ -2,5 +2,6 @@
 /* eslint-disable */
 export enum ServicesName {
   MirJournalService = 'MirJournalService',
-  DaService = 'DAService'
+  DaService = 'DAService',
+  Energy = 'Energy'
 }

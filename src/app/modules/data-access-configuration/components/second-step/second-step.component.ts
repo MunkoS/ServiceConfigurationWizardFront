@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { EMPTY, mergeMap, Observable, Subject, take, takeUntil, tap } from 'rxjs';
+import { EMPTY, mergeMap, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
 import { faCheck, faChevronDown, faChevronLeft, faChevronUp, faSyncAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
-import { DbConfig } from '../../../api/ng-openapi/models/db-config';
+
 import { OperationStatus, SecondStepInfo } from './model/second-step';
 import { ServicesService } from '../../../api/ng-openapi/services/services.service';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 import { JournalConfigService } from '../../../api/ng-openapi/services/journal-config.service';
+import { ConfigInfo } from '../../../api/ng-openapi/models/config-info';
+import { DispatcherConfigService } from '../../../api/ng-openapi/services/dispatcher-config.service';
 
 @Component({
   selector: 'second-step',
@@ -32,13 +34,14 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   public iconLoad = faSyncAlt;
   public iconError = faTimesCircle;
   public iconSuccess = faCheck;
-  @Input() public dbConfig: DbConfig | undefined;
+  @Input() public config: ConfigInfo | undefined;
   @Output() public readonly firstStep = new EventEmitter();
   public progressBarValue = 0;
   public showCancelButton = true;
   constructor(
     private journalConfigService: JournalConfigService,
     private dbConfigService: DbConfigService,
+    private dispatcherConfigService: DispatcherConfigService,
     private sqlService: SqlService,
     private servicesService: ServicesService,
     private cdr: ChangeDetectorRef
@@ -47,32 +50,56 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   private checkSqlConnections(): Observable<boolean> {
     return this.sqlService.checkSqlConnectionsPost$Json({
       body: {
-        password: this.dbConfig?.password,
-        dataSource: this.dbConfig?.hostName,
-        userId: this.dbConfig?.userName
+        password: this.config?.password,
+        dataSource: this.config?.hostName,
+        userId: this.config?.userName
       }
     });
   }
 
   private saveConfig(): Observable<any> {
-    const config =
-      this.service === ServicesName.DaService
-        ? this.dbConfigService.dbConfigPatch$Json({
-            body: {
-              password: this.dbConfig?.password,
-              hostName: this.dbConfig?.hostName,
-              userName: this.dbConfig?.userName,
-              dbName: this.dbConfig?.dbName
-            }
-          })
-        : this.journalConfigService.journalConfigPatch$Json({
-            body: {
-              password: this.dbConfig?.password,
-              hostName: this.dbConfig?.hostName,
-              userName: this.dbConfig?.userName,
-              dbName: this.dbConfig?.dbName
-            }
-          });
+    let config = of(true);
+    // eslint-disable-next-line default-case
+    switch (this.service) {
+      case ServicesName.DaService: {
+        config = this.dbConfigService.dbConfigPatch$Json({
+          body: {
+            password: this.config?.password,
+            hostName: this.config?.hostName,
+            userName: this.config?.userName,
+            dbName: this.config?.dbName
+          }
+        });
+        break;
+      }
+      case ServicesName.MirJournalService: {
+        config = this.journalConfigService.journalConfigPatch$Json({
+          body: {
+            password: this.config?.password,
+            hostName: this.config?.hostName,
+            userName: this.config?.userName,
+            dbName: this.config?.dbName
+          }
+        });
+        break;
+      }
+      case ServicesName.Energy: {
+        config = this.dispatcherConfigService.dispatcherConfigPatch$Json({
+          body: {
+            password: this.config?.password,
+            hostName: this.config?.hostName,
+            userName: this.config?.userName,
+            dbName: this.config?.dbName
+          }
+        });
+        break;
+      }
+      default: {
+        console.error('Не передан тип службы!');
+        return EMPTY;
+      }
+    }
+
     return config.pipe(
       mergeMap(hasSaveConfig => {
         if (hasSaveConfig) {
@@ -105,7 +132,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
             this.cdr.detectChanges();
             return this.sqlService
               .checkDatabaseExistPost$Json({
-                body: this.dbConfig
+                body: this.config
               })
               .pipe(
                 mergeMap(isExistDb => {
@@ -150,7 +177,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                   this.cdr.detectChanges();
                   return this.sqlService
                     .createNewDbPost$Json({
-                      body: this.dbConfig
+                      body: this.config
                     })
                     .pipe(
                       tap(dbCreateError => {
