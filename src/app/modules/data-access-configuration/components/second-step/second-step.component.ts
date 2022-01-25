@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { EMPTY, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
+import { EMPTY, mergeMap, Observable, Subject, take, takeUntil, tap } from 'rxjs';
 import { faCheck, faChevronDown, faChevronLeft, faChevronUp, faSyncAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
@@ -22,7 +22,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   public loadingOperation = OperationStatus.loading;
   public errorOperation = OperationStatus.error;
   public successOperation = OperationStatus.success;
-  public currentOperationName = '';
+  public currentOperationName = 'Проверка подключения SQL';
   public operationsInfo!: SecondStepInfo;
 
   public iconUp = faChevronUp;
@@ -81,11 +81,10 @@ export class SecondStepComponent implements OnInit, OnDestroy {
               service: this.service
             })
             .pipe(
-              mergeMap(restartErrorMessage => {
+              tap(restartErrorMessage => {
                 if (restartErrorMessage.length !== 0) {
                   console.error(`Ошибка при перезапуске службы! ${restartErrorMessage}`);
                 }
-                return EMPTY;
               })
             );
         }
@@ -102,7 +101,6 @@ export class SecondStepComponent implements OnInit, OnDestroy {
           this.progressBarValue = 33;
           if (isSuccessSqlConnection) {
             this.operationsInfo.sql.operationStatus = OperationStatus.success;
-            this.operationsInfo.sql.message = OperationStatus.success;
             this.currentOperationName = 'Проверка наличия бд';
             this.cdr.detectChanges();
             return this.sqlService
@@ -112,67 +110,66 @@ export class SecondStepComponent implements OnInit, OnDestroy {
               .pipe(
                 mergeMap(isExistDb => {
                   if (isExistDb) {
-                    this.progressBarValue = 100;
                     this.operationsInfo.db.operationStatus = OperationStatus.success;
-                    this.operationsInfo.service.operationStatus = OperationStatus.success;
                     this.operationsInfo.db.message = 'База данных существует';
-                    this.currentOperationName = 'Все проверки выполнены: База данных существует';
                     this.showCancelButton = false;
+                    this.currentOperationName = `Доступность службы`;
+                    this.progressBarValue = 66;
                     this.cdr.detectChanges();
-                    return this.saveConfig();
+
+                    return this.saveConfig().pipe(
+                      mergeMap(() => {
+                        const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
+                        return this.servicesService
+                          .checkSericePost$Json({
+                            hostName: 'localhost',
+                            serviceName: this.service,
+                            body: ports
+                          })
+                          .pipe(
+                            tap(serviceErrorMessage => {
+                              if (serviceErrorMessage.length === 0) {
+                                this.currentOperationName = 'Все проверки выполнены: База данных существует';
+                                this.operationsInfo.service.operationStatus = OperationStatus.success;
+                                this.progressBarValue = 100;
+                                this.showCancelButton = true;
+                                this.cdr.detectChanges();
+                              } else {
+                                this.progressBarValue = 100;
+                                this.operationsInfo.service.operationStatus = OperationStatus.error;
+                                this.operationsInfo.service.message = serviceErrorMessage;
+                                this.cdr.detectChanges();
+                              }
+                            })
+                          );
+                      })
+                    );
                   }
-                  this.currentOperationName = `Доступность службы`;
-                  this.progressBarValue = 66;
+
+                  this.currentOperationName = 'Создание базы данных!';
                   this.cdr.detectChanges();
-                  const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
-                  return this.servicesService
-                    .checkSericePost$Json({
-                      hostName: 'localhost',
-                      serviceName: this.service,
-                      body: ports
+                  return this.sqlService
+                    .createNewDbPost$Json({
+                      body: this.dbConfig
                     })
                     .pipe(
-                      mergeMap(serviceErrorMessage => {
-                        if (serviceErrorMessage.length === 0) {
-                          this.currentOperationName = 'Все проверки выполнены';
-                          this.operationsInfo.service.operationStatus = OperationStatus.success;
-                          this.operationsInfo.service.message = OperationStatus.success;
-                          this.progressBarValue = 100;
-                          this.showCancelButton = true;
+                      tap(dbCreateError => {
+                        if (dbCreateError.length === 0) {
+                          this.operationsInfo.db.operationStatus = OperationStatus.success;
                           this.cdr.detectChanges();
-                          return this.sqlService
-                            .createNewDbPost$Json({
-                              body: this.dbConfig
-                            })
-                            .pipe(
-                              mergeMap(dbCreateError => {
-                                if (dbCreateError.length === 0) {
-                                  this.operationsInfo.db.operationStatus = OperationStatus.success;
-                                  this.operationsInfo.db.message = OperationStatus.success;
-                                  this.cdr.detectChanges();
-                                  this.checkOperations();
-                                  return EMPTY;
-                                }
-                                this.operationsInfo.db.operationStatus = OperationStatus.error;
-                                this.operationsInfo.db.message = dbCreateError;
-                                this.cdr.detectChanges();
-                                return EMPTY;
-                              })
-                            );
+                          this.checkOperations();
+                        } else {
+                          this.operationsInfo.db.operationStatus = OperationStatus.error;
+                          this.operationsInfo.db.message = dbCreateError;
                         }
-                        this.operationsInfo.service.operationStatus = OperationStatus.error;
-                        this.operationsInfo.service.message = serviceErrorMessage;
-                        this.operationsInfo.db.operationStatus = OperationStatus.error;
-                        this.operationsInfo.db.message = serviceErrorMessage;
+
                         this.cdr.detectChanges();
-                        return EMPTY;
                       })
                     );
                 })
               );
           }
           this.operationsInfo.sql.operationStatus = OperationStatus.error;
-          this.operationsInfo.sql.message = OperationStatus.error;
           this.cdr.detectChanges();
           return EMPTY;
         })
