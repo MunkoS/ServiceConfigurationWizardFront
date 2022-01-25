@@ -1,9 +1,9 @@
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 export enum OperationStatus {
-  loading = 'выполняется...',
-  error = 'сбой',
-  success = 'успешно'
+  loading = 'Выполняется...',
+  error = 'Сбой',
+  success = 'Успешно'
 }
 
 type OperationInfo = {

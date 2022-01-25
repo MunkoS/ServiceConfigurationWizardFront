@@ -144,7 +144,7 @@ export class FirstStepComponent implements OnInit, OnDestroy {
     this.form
       .get('security')
       ?.valueChanges.pipe(
-        debounceTime(300),
+        debounceTime(2000),
         switchMap(() => {
           this.formChange = true;
           this.downloadBdOptions();

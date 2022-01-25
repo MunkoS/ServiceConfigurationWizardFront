@@ -83,7 +83,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
             .pipe(
               mergeMap(restartErrorMessage => {
                 if (restartErrorMessage.length !== 0) {
-                  console.error(`Ошибка при перезапуске службы ${this.service}!${restartErrorMessage}`);
+                  console.error(`Ошибка при перезапуске службы! ${restartErrorMessage}`);
                 }
                 return EMPTY;
               })
@@ -121,7 +121,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                     return this.saveConfig();
                   }
-                  this.currentOperationName = `Доступность службы ${this.service}`;
+                  this.currentOperationName = `Доступность службы`;
                   this.progressBarValue = 66;
                   this.cdr.detectChanges();
                   const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
@@ -193,7 +193,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
         showMessage: false
       },
       service: {
-        title: `Подключение ${this.service}`,
+        title: `Подключение к службе`,
         iconOperation: faSyncAlt,
         operationStatus: OperationStatus.loading,
         message: '',
@@ -203,7 +203,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
         title: 'Создание БД',
         iconOperation: faSyncAlt,
         operationStatus: OperationStatus.loading,
-        message: 'ntcn',
+        message: '',
         showMessage: false
       }
     };

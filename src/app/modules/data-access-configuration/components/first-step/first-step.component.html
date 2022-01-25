@@ -19,7 +19,7 @@
       </div>
       </div>
       <div class="row">
-        <span class="text">База данных</span>
+        <span class="text">Имя БД</span>
         <ng-container *ngLet="bdOptions$ | async as bdOptions">
           <app-select
             formControlName="dbName"
@@ -30,7 +30,7 @@
         </ng-container>
       </div>
       <div *ngIf="sqlError" class="text new-bd new-bd-container">Нет связи с SQL сервером</div>
-      <div *ngIf="createNewBd" class="text new-bd new-bd-container">Бд будет создана</div>
+      <div *ngIf="createNewBd" class="text new-bd new-bd-container">БД будет создана</div>
     </div>
   </div>
 
