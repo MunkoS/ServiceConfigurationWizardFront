@@ -1,0 +1,42 @@
+:host{
+  flex-direction: column;
+  padding: 20px 10px 10px 10px;
+  display: flex;
+  height: 100%;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.body {
+  flex-direction: column;
+  padding: 20px 50px 10px 15px;
+  display: flex;
+  height: 100%;
+}
+
+.title{
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.row {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+}
+
+.row-pass {
+  @extend .row;
+  grid-template-columns: 160px 1fr 50px;
+}
+
+
+
+.ml20 {
+  margin-left: 20px;
+}

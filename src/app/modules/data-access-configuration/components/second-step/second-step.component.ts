@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { EMPTY, mergeMap, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
 import { faCheck, faChevronDown, faChevronLeft, faChevronUp, faSyncAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { FormGroup } from '@angular/forms';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
-
 import { OperationStatus, SecondStepInfo } from './model/second-step';
 import { ServicesService } from '../../../api/ng-openapi/services/services.service';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
@@ -34,8 +34,9 @@ export class SecondStepComponent implements OnInit, OnDestroy {
   public iconLoad = faSyncAlt;
   public iconError = faTimesCircle;
   public iconSuccess = faCheck;
+  @Input() public energyForms: FormGroup[] | undefined;
   @Input() public config: ConfigInfo | undefined;
-  @Output() public readonly firstStep = new EventEmitter();
+  @Output() public readonly backStep = new EventEmitter();
   public progressBarValue = 0;
   public showCancelButton = true;
   constructor(
@@ -197,6 +198,8 @@ export class SecondStepComponent implements OnInit, OnDestroy {
               );
           }
           this.operationsInfo.sql.operationStatus = OperationStatus.error;
+          this.operationsInfo.service.operationStatus = OperationStatus.error;
+          this.operationsInfo.db.operationStatus = OperationStatus.error;
           this.cdr.detectChanges();
           return EMPTY;
         })
@@ -236,7 +239,7 @@ export class SecondStepComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
   public back(): void {
-    this.firstStep.emit();
+    this.backStep.emit();
   }
 
   public ngOnDestroy(): void {

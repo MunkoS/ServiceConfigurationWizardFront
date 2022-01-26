@@ -7,6 +7,9 @@
     <fa-icon class="box fa-2x" routerLink="/" [icon]="closeIcon"></fa-icon>
   </div>
   <div class="hl"></div>
-  <first-step [service]="currentService" *ngIf="!secondStep" (secondStep)="goSecondStep($event)"></first-step>
-  <second-step [service]="currentService" *ngIf="secondStep" (firstStep)="secondStep = !secondStep" [config]="config"></second-step>
+
+  <first-step [service]="currentService"  [style.display] = "firstStep ? 'flex' : 'none' " (secondStep)="goSecondStep($event)"></first-step>
+  <app-scada-account-settings [style.display] = "energyStep ? 'flex' : 'none' "   (confrimForm)="scadaConfirmForm($event)"></app-scada-account-settings>
+  <second-step [service]="currentService" *ngIf="secondStep" (backStep)="secondStepBack()"
+               [config]="config" [energyForms]="energyForms"></second-step>
 </div>

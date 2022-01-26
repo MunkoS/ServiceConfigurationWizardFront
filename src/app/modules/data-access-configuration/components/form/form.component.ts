@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { faBoxOpen, faWindowClose } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 import { ConfigInfo } from '../../../api/ng-openapi/models/config-info';
 
@@ -14,9 +15,12 @@ export class FormComponent implements OnInit {
   public boxIcon = faBoxOpen;
   public closeIcon = faWindowClose;
   public config: ConfigInfo | undefined;
+  public firstStep = true;
   public secondStep = false;
+  public energyStep = false;
   public title: string | undefined;
   public currentService: ServicesName | undefined;
+  public energyForms: FormGroup[] | undefined;
   constructor(private cdr: ChangeDetectorRef, private route: ActivatedRoute) {}
 
   public ngOnInit(): void {
@@ -38,7 +42,35 @@ export class FormComponent implements OnInit {
   }
   public goSecondStep(dbConfg: ConfigInfo): void {
     this.config = dbConfg;
-    this.secondStep = true;
+    this.firstStep = false;
+    if (this.currentService !== ServicesName.Energy) {
+      this.secondStep = true;
+    } else {
+      this.energyStep = true;
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  public scadaConfirmForm(forms: FormGroup[]): void {
+    this.energyStep = false;
+
+    if (forms.length === 0) {
+      this.firstStep = true;
+    } else {
+      this.energyForms = forms;
+      this.secondStep = true;
+    }
+    this.cdr.detectChanges();
+  }
+
+  public secondStepBack(): void {
+    this.secondStep = false;
+    if (this.currentService === ServicesName.Energy) {
+      this.energyStep = true;
+    } else {
+      this.firstStep = true;
+    }
     this.cdr.detectChanges();
   }
 }
