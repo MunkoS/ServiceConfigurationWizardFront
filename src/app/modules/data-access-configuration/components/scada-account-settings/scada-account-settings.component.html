@@ -4,7 +4,8 @@
     formTemplate;
     context: {
       form: graphForm,
-      title: 'АРМ Графический редактор'
+      title: 'АРМ Графический редактор',
+      users: editUsers
     }
   "
 ></ng-container>
@@ -14,7 +15,8 @@
     formTemplate;
     context: {
       form: dispForm,
-      title: 'АРМ Диспетчер'
+      title: 'АРМ Диспетчер',
+      users: dispUsers
     }
   "
 ></ng-container>
@@ -33,28 +35,17 @@
   </button>
 </div>
 
-<ng-template #formTemplate let-form="form" let-title="title" >
+<ng-template #formTemplate let-form="form" let-title="title" let-users="users" >
   <div class="body">
     <span class="title">{{ title }}</span>
     <div [formGroup]="form">
       <div class="row">
         <span class="text">Логин</span>
-        <!--  <ng-container *ngLet="bdOptions$ | async as bdOptions">-->
         <app-select
           formControlName="login"
-          [selectOptions]="
-            [
-              {
-                value: '2',
-                title: '3'
-              }
-            ]
-          "
+          [selectOptions]="users"
           placeholder="Имя пользователя"
         ></app-select>
-        <!--    [loading]="bdLoading"
-            [selectOptions]="bdOptions"-->
-        <!--      </ng-container>-->
       </div>
       <div class="row-pass">
         <span class="text">Пароль</span>

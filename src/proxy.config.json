@@ -1,12 +1,33 @@
 [
   {
     "context": ["**/api/**"],
-    "target": "http://localhost:5001/",
+    "target": "http://localhost:5004/",
     "changeOrigin": true,
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
       "^/api/": ""
+    }
+  },
+  {
+    "context": ["**/scadaLogin/**"],
+    "target": "http://localhost:80/api/login/api/",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/scadaLogin/": ""
+    }
+  },
+
+  {
+    "context": ["**/scadaApi/**"],
+    "target": "http://localhost:80/api/acs/api/",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/scadaApi/": ""
     }
   }
 ]

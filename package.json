@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "js-sha512": "^0.8.0",
     "@angular/animations": "~13.1.2",
     "@angular/cdk": "^13.1.2",
     "@angular/common": "~13.1.2",

@@ -12,10 +12,12 @@ type OperationInfo = {
   operationStatus: OperationStatus;
   message: string;
   showMessage: boolean;
+  show: boolean;
 };
 
 export type SecondStepInfo = {
   sql: OperationInfo;
   service: OperationInfo;
   db: OperationInfo;
+  scada: OperationInfo;
 };

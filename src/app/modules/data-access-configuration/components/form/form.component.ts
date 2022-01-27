@@ -21,6 +21,7 @@ export class FormComponent implements OnInit {
   public title: string | undefined;
   public currentService: ServicesName | undefined;
   public energyForms: FormGroup[] | undefined;
+  public energyModule = ServicesName.Energy;
   constructor(private cdr: ChangeDetectorRef, private route: ActivatedRoute) {}
 
   public ngOnInit(): void {

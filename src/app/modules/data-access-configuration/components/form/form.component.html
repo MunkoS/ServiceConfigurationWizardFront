@@ -9,7 +9,7 @@
   <div class="hl"></div>
 
   <first-step [service]="currentService"  [style.display] = "firstStep ? 'flex' : 'none' " (secondStep)="goSecondStep($event)"></first-step>
-  <app-scada-account-settings [style.display] = "energyStep ? 'flex' : 'none' "   (confrimForm)="scadaConfirmForm($event)"></app-scada-account-settings>
+  <app-scada-account-settings *ngIf="currentService === energyModule" [style.display] = "energyStep ? 'flex' : 'none' "   (confrimForm)="scadaConfirmForm($event)"></app-scada-account-settings>
   <second-step [service]="currentService" *ngIf="secondStep" (backStep)="secondStepBack()"
                [config]="config" [energyForms]="energyForms"></second-step>
 </div>

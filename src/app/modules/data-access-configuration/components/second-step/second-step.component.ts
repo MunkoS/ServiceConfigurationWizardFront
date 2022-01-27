@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { EMPTY, mergeMap, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
+import { catchError, EMPTY, forkJoin, mergeMap, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
 import { faCheck, faChevronDown, faChevronLeft, faChevronUp, faSyncAlt, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormGroup } from '@angular/forms';
+import { sha512 } from 'js-sha512';
 import { DbConfigService } from '../../../api/ng-openapi/services/db-config.service';
 import { SqlService } from '../../../api/ng-openapi/services/sql.service';
 import { OperationStatus, SecondStepInfo } from './model/second-step';
@@ -10,6 +11,7 @@ import { ServicesName } from '../../../api/ng-openapi/models/services-name';
 import { JournalConfigService } from '../../../api/ng-openapi/services/journal-config.service';
 import { ConfigInfo } from '../../../api/ng-openapi/models/config-info';
 import { DispatcherConfigService } from '../../../api/ng-openapi/services/dispatcher-config.service';
+import { ScadaService } from '../../services/scada.service';
 
 @Component({
   selector: 'second-step',
@@ -45,7 +47,8 @@ export class SecondStepComponent implements OnInit, OnDestroy {
     private dispatcherConfigService: DispatcherConfigService,
     private sqlService: SqlService,
     private servicesService: ServicesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private scadaService: ScadaService
   ) {}
 
   private checkSqlConnections(): Observable<boolean> {
@@ -147,6 +150,36 @@ export class SecondStepComponent implements OnInit, OnDestroy {
 
                     return this.saveConfig().pipe(
                       mergeMap(() => {
+                        if (this.service === ServicesName.Energy) {
+                          return forkJoin([
+                            this.servicesService.checkSericePost$Json({
+                              hostName: 'localhost',
+                              serviceName: ServicesName.Editor,
+                              body: [5102]
+                            }),
+                            this.servicesService.checkSericePost$Json({
+                              hostName: 'localhost',
+                              serviceName: ServicesName.Dispatcher,
+                              body: [5101]
+                            })
+                          ]).pipe(
+                            tap(res => {
+                              if (res.filter(x => x.length === 0).length === 2) {
+                                this.currentOperationName = 'Все проверки выполнены: База данных существует';
+                                this.operationsInfo.service.operationStatus = OperationStatus.success;
+                                this.progressBarValue = 100;
+                                this.showCancelButton = true;
+                                this.cdr.detectChanges();
+                              } else {
+                                this.progressBarValue = 100;
+                                this.operationsInfo.service.operationStatus = OperationStatus.error;
+                                this.operationsInfo.service.message = `Editor error: ${res[0]} '\n'Dispatcher error: ${res[1]}`;
+                                this.cdr.detectChanges();
+                              }
+                            })
+                          );
+                        }
+
                         const ports = this.service === ServicesName.MirJournalService ? [7082, 7083] : [7070, 4568];
                         return this.servicesService
                           .checkSericePost$Json({
@@ -204,7 +237,16 @@ export class SecondStepComponent implements OnInit, OnDestroy {
           return EMPTY;
         })
       )
-      .pipe(take(1), takeUntil(this._destroy$))
+      .pipe(
+        catchError((err: string) => {
+          this.operationsInfo.scada.operationStatus = OperationStatus.error;
+          this.operationsInfo.scada.message = err;
+          this.cdr.detectChanges();
+          return EMPTY;
+        }),
+        take(1),
+        takeUntil(this._destroy$)
+      )
       .subscribe(() => {
         this.cdr.detectChanges();
       });
@@ -217,24 +259,70 @@ export class SecondStepComponent implements OnInit, OnDestroy {
         iconOperation: faSyncAlt,
         operationStatus: OperationStatus.loading,
         message: '',
-        showMessage: false
+        showMessage: false,
+        show: true
       },
       service: {
         title: `Подключение к службе`,
         iconOperation: faSyncAlt,
         operationStatus: OperationStatus.loading,
         message: '',
-        showMessage: false
+        showMessage: false,
+        show: true
       },
       db: {
         title: 'Создание БД',
         iconOperation: faSyncAlt,
         operationStatus: OperationStatus.loading,
         message: '',
-        showMessage: false
+        showMessage: false,
+        show: true
+      },
+      scada: {
+        title: 'Создание учетной записи',
+        iconOperation: faSyncAlt,
+        operationStatus: OperationStatus.loading,
+        message: '',
+        showMessage: false,
+        show: !!(this.energyForms && this.energyForms?.length > 0)
       }
     };
     this.currentOperationName = 'Проверка подключения к Sql';
+
+    if (this.energyForms && this.energyForms?.length > 0) {
+      const dispForm = this.energyForms[0];
+      const graphForm = this.energyForms[1];
+
+      forkJoin([
+        this.scadaService.AddUsers({
+          name: dispForm.get('login')?.value,
+          groupsIds: [dispForm.get('groupId')?.value],
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          passwordHash: sha512(dispForm.get('password')?.value)
+        }),
+        this.scadaService.AddUsers({
+          name: graphForm.get('login')?.value,
+          groupsIds: [graphForm.get('groupId')?.value],
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          passwordHash: sha512(graphForm.get('password')?.value)
+        })
+      ])
+        .pipe(
+          catchError((err: any) => {
+            this.operationsInfo.scada.operationStatus = OperationStatus.error;
+            this.operationsInfo.scada.message = err.error;
+            this.cdr.detectChanges();
+            return EMPTY;
+          }),
+          take(1),
+          takeUntil(this._destroy$)
+        )
+        .subscribe(() => {
+          this.operationsInfo.scada.operationStatus = OperationStatus.success;
+
+          this.cdr.detectChanges();
+        });
+    }
     this.checkOperations();
     this.cdr.detectChanges();
   }

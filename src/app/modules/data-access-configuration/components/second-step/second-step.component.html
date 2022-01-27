@@ -16,6 +16,15 @@
     *ngTemplateOutlet="
       rowTemplate;
       context: {
+        operationInfo: operationsInfo.scada
+      }
+    "
+  ></ng-container>
+
+  <ng-container
+    *ngTemplateOutlet="
+      rowTemplate;
+      context: {
         operationInfo: operationsInfo.db
       }
     "
@@ -58,7 +67,7 @@
 </div>
 
 <ng-template #rowTemplate let-operationInfo="operationInfo">
-  <div class="row">
+  <div *ngIf="operationInfo.show" class="row">
     <span class="text first-column">
       <fa-icon class="gray" (click)="operationInfo.showMessage = !operationInfo.showMessage" [icon]="!operationInfo.showMessage ? iconDown : iconUp"></fa-icon>
       {{ operationInfo.title }}
